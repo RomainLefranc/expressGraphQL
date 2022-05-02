@@ -1,4 +1,4 @@
-module.exports = `
+exports.GET_LIST_CHARACTER = `
 query {
     Page(perPage: 50) {
         characters {

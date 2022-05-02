@@ -1,11 +1,12 @@
 const axios = require("axios");
-const schema = require("../schema/schema");
+const { GET_LIST_CHARACTER } = require("../schema/schema");
+
 exports.getAll = async function (req, res) {
   axios
     .post(
       "https://graphql.anilist.co",
       {
-        query: schema,
+        query: GET_LIST_CHARACTER,
       },
       {
         headers: {
