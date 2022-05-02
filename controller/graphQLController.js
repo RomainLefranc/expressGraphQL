@@ -1,6 +1,6 @@
 const axios = require("axios");
 const schema = require("../schema/schema");
-exports.get = async function (req, res) {
+exports.getAll = async function (req, res) {
   axios
     .post(
       "https://graphql.anilist.co",
