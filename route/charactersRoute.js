@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 const controller = require("../controller/charactersController");
 
+router.get("/", controller.getAll);
+
 router.post("/", controller.add);
 
 router.put("/:characterId", controller.update);
