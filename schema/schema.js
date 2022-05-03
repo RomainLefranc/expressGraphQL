@@ -1,6 +1,6 @@
 exports.GET_LIST_CHARACTER = `
-query {
-    Page(perPage: 50) {
+query Page ($page : Int!){
+    Page(page: $page,perPage: 50) {
         characters {
             name {
                 first
@@ -14,3 +14,17 @@ query {
     }
 }
 `;
+
+exports.GET_CHARACTER_BY_ANIME = `
+query Media ($search : String){
+    Media(search: $search) {
+      characters {
+        nodes {
+          name {
+            full
+          }
+        }
+      }
+    }
+  }
+  `;

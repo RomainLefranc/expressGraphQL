@@ -1,8 +1,13 @@
 const Character = require("../model/character");
 
 exports.get = async function (req, res) {
-  const { characterId } = req.params;
-  Character.findByPk(characterId)
+  let { characterfullName } = req.params;
+  characterfullName = decodeURIComponent(characterfullName);
+  Character.findOne({
+    where: {
+      fullName: characterfullName,
+    },
+  })
     .then((e) => res.status(200).send(e))
     .catch((e) => res.status(500).send(e));
 };
@@ -19,20 +24,14 @@ exports.add = async function (req, res) {
     .catch((e) => res.status(500).send(e));
 };
 
-exports.update = async function (req, res) {
-  const { characterId } = req.params;
-  const character = await Character.findByPk(characterId);
-  if (!character) {
-    return res.status(404).send("characterId invalide");
-  }
-  Character.update(req.body, { where: { id: character.id } })
-    .then((e) => res.status(200).send(e))
-    .catch((e) => res.status(500).send(e));
-};
-
 exports.delete = async function (req, res) {
-  const { characterId } = req.params;
-  const character = await Character.findByPk(characterId);
+  let { characterfullName } = req.params;
+  characterfullName = decodeURIComponent(characterfullName);
+  const character = await Character.findOne({
+    where: {
+      fullName: characterfullName,
+    },
+  });
   if (!character) {
     return res.status(404).send("characterId invalide");
   }
