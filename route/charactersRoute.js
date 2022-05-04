@@ -6,8 +6,6 @@ router.get("/", controller.getAll);
 
 router.post("/", controller.add);
 
-router.delete("/:characterfullName", controller.delete);
-
-router.get("/:characterfullName", controller.get);
+router.delete("/:characterId", controller.delete);
 
 module.exports = router;

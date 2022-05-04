@@ -5,18 +5,8 @@ const Character = sequelize.define(
   "Character",
   {
     // Model attributes are defined here
-    firstName: {
-      type: DataTypes.STRING,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-    },
-    fullName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    imageUrl: {
-      type: DataTypes.STRING,
+    characterId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },
@@ -26,7 +16,7 @@ const Character = sequelize.define(
 );
 
 (async () => {
-  await Character.sync({ force: true });
+  await Character.sync();
 })();
 
 module.exports = Character;

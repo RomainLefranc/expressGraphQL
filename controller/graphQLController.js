@@ -22,12 +22,13 @@ exports.getAll = async function (req, res) {
     response.data.data.Page.characters.map(async (character) => {
       const dbCharacter = await Character.findOne({
         where: {
-          fullName: character.name.full,
+          characterId: character.id,
         },
       });
       const liked = dbCharacter ? true : false;
       character.liked = liked;
       return {
+        id: character.id,
         first: character.name.first,
         last: character.name.last,
         full: character.name.full,
@@ -62,12 +63,13 @@ exports.getByAnime = async function (req, res) {
     response.data.data.Media.characters.nodes.map(async (character) => {
       const dbCharacter = await Character.findOne({
         where: {
-          fullName: character.name.full,
+          characterId: character.id,
         },
       });
       const liked = dbCharacter ? true : false;
       character.liked = liked;
       return {
+        id: character.id,
         first: character.name.first,
         last: character.name.last,
         full: character.name.full,
@@ -102,12 +104,13 @@ exports.getRandom = async function (req, res) {
       const character = response.data.data.Character;
       const dbCharacter = await Character.findOne({
         where: {
-          fullName: character.name.full,
+          characterId: character.id,
         },
       });
       const liked = dbCharacter ? true : false;
       character.liked = liked;
       return res.status(200).send({
+        id: character.id,
         first: character.name.first,
         last: character.name.last,
         full: character.name.full,
