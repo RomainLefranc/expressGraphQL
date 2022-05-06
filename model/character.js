@@ -16,7 +16,7 @@ const Character = sequelize.define(
 );
 
 (async () => {
-  await Character.sync();
+  await Character.sync({ force: true });
 })();
 
 module.exports = Character;

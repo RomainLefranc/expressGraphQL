@@ -15,7 +15,9 @@ exports.get = async function (req, res) {
 };
 
 exports.getAll = async function (req, res) {
-  const characters = await Character.findAll().catch((e) => res.status(500).send(e));
+  const characters = await Character.findAll().catch((e) =>
+    res.status(500).send(e)
+  );
   const result = await Promise.all(
     characters.map(async (character) => {
       const response = await axios.post(
@@ -34,7 +36,7 @@ exports.getAll = async function (req, res) {
       );
       const aniCharacter = response.data.data.Character;
       return {
-        id: character.id,
+        id: character.characterId,
         first: aniCharacter.name.first,
         last: aniCharacter.name.last,
         full: aniCharacter.name.full,

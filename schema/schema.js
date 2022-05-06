@@ -4,12 +4,12 @@ query Page ($page : Int!){
         characters {
             id
             name {
-                first
-                last
-                full
+              first
+              last
+              full
             }
             image {
-                large
+              large
             }
         }
     }
