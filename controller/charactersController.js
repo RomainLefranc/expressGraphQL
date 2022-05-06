@@ -15,37 +15,38 @@ exports.get = async function (req, res) {
 };
 
 exports.getAll = async function (req, res) {
-  const characters = await Character.findAll().catch((e) =>
-    res.status(500).send(e)
-  );
-  const result = await Promise.all(
-    characters.map(async (character) => {
-      const response = await axios.post(
-        "https://graphql.anilist.co",
-        {
-          query: GET_CHARACTER_BY_ID,
-          variables: {
+  Character.findAll()
+    .catch((e) => res.status(500).send(e))
+    .then(async (characters) => {
+      const result = await Promise.all(
+        characters.map(async (character) => {
+          const response = await axios.post(
+            "https://graphql.anilist.co",
+            {
+              query: GET_CHARACTER_BY_ID,
+              variables: {
+                id: character.characterId,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          const aniCharacter = response.data.data.Character;
+          return {
             id: character.characterId,
-          },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+            first: aniCharacter.name.first,
+            last: aniCharacter.name.last,
+            full: aniCharacter.name.full,
+            image: aniCharacter.image.large,
+            liked: true,
+          };
+        })
       );
-      const aniCharacter = response.data.data.Character;
-      return {
-        id: character.characterId,
-        first: aniCharacter.name.first,
-        last: aniCharacter.name.last,
-        full: aniCharacter.name.full,
-        image: aniCharacter.image.large,
-        liked: true,
-      };
-    })
-  );
-  res.status(200).send(result);
+      res.status(200).send(result);
+    });
 };
 
 exports.add = async function (req, res) {
@@ -56,7 +57,6 @@ exports.add = async function (req, res) {
 
 exports.delete = async function (req, res) {
   let { characterId } = req.params;
-  characterId = decodeURIComponent(characterId);
   Character.destroy({
     where: {
       characterId: characterId,

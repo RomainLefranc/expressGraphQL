@@ -7,41 +7,42 @@ const {
 const Character = require("../model/character");
 
 exports.getAll = async function (req, res) {
-  const response = await axios.post(
-    "https://graphql.anilist.co",
-    {
-      query: GET_LIST_CHARACTER,
-      variables: {
-        page: req.body.page,
-      },
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  const result = await Promise.all(
-    response.data.data.Page.characters.map(async (character) => {
-      const dbCharacter = await Character.findOne({
-        where: {
-          characterId: character.id,
+  axios
+    .post(
+      "https://graphql.anilist.co",
+      {
+        query: GET_LIST_CHARACTER,
+        variables: {
+          page: req.body.page,
         },
-      });
-      const liked = dbCharacter ? true : false;
-      character.liked = liked;
-      return {
-        id: character.id,
-        first: character.name.first,
-        last: character.name.last,
-        full: character.name.full,
-        image: character.image.large,
-        liked,
-      };
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then(async (response) => {
+      const result = await Promise.all(
+        response.data.data.Page.characters.map(async (character) => {
+          const dbCharacter = await Character.findOne({
+            where: {
+              characterId: character.id,
+            },
+          });
+          return {
+            id: character.id,
+            first: character.name.first,
+            last: character.name.last,
+            full: character.name.full,
+            image: character.image.large,
+            liked: dbCharacter ? true : false,
+          };
+        })
+      );
+      return res.status(200).send(result);
     })
-  );
-  return res.status(200).send(result);
+    .catch((e) => res.status(500).send(e));
 };
 
 exports.getByAnime = async function (req, res) {
@@ -62,7 +63,6 @@ exports.getByAnime = async function (req, res) {
         },
       }
     )
-    .catch((e) => res.status(500).send(e))
     .then(async (response) => {
       const result = await Promise.all(
         response.data.data.Media.characters.nodes.map(async (character) => {
@@ -83,7 +83,8 @@ exports.getByAnime = async function (req, res) {
         })
       );
       res.status(200).send(result);
-    });
+    })
+    .catch((e) => res.status(500).send(e));
 };
 
 exports.getRandom = async function (req, res) {
