@@ -9,7 +9,11 @@ const Character = sequelize.define("Character", {
 });
 
 (async () => {
-  await Character.sync({ force: true });
+  try {
+    await Character.sync({ force: true });
+  } catch (error) {
+    console.log(error);
+  }
 })();
 
 module.exports = Character;

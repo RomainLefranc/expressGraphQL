@@ -23,24 +23,28 @@ exports.getAll = async function (req, res) {
       }
     )
     .then(async (response) => {
-      const result = await Promise.all(
-        response.data.data.Page.characters.map(async (character) => {
-          const dbCharacter = await Character.findOne({
-            where: {
-              characterId: character.id,
-            },
-          });
-          return {
-            id: character.id,
-            first: character.name.first,
-            last: character.name.last,
-            full: character.name.full,
-            image: character.image.large,
-            liked: dbCharacter ? true : false,
-          };
-        })
-      );
-      return res.status(200).send(result);
+      try {
+        const result = await Promise.all(
+          response.data.data.Page.characters.map(async (character) => {
+            const dbCharacter = await Character.findOne({
+              where: {
+                characterId: character.id,
+              },
+            });
+            return {
+              id: character.id,
+              first: character.name.first,
+              last: character.name.last,
+              full: character.name.full,
+              image: character.image.large,
+              liked: dbCharacter ? true : false,
+            };
+          })
+        );
+        return res.status(200).send(result);
+      } catch (error) {
+        return res.status(500).send(error);
+      }
     })
     .catch((e) => res.status(500).send(e));
 };
@@ -64,25 +68,29 @@ exports.getByAnime = async function (req, res) {
       }
     )
     .then(async (response) => {
-      const result = await Promise.all(
-        response.data.data.Media.characters.nodes.map(async (character) => {
-          const dbCharacter = await Character.findOne({
-            where: {
-              characterId: character.id,
-            },
-          });
-          const liked = dbCharacter ? true : false;
-          return {
-            id: character.id,
-            first: character.name.first,
-            last: character.name.last,
-            full: character.name.full,
-            image: character.image.large,
-            liked,
-          };
-        })
-      );
-      res.status(200).send(result);
+      try {
+        const result = await Promise.all(
+          response.data.data.Media.characters.nodes.map(async (character) => {
+            const dbCharacter = await Character.findOne({
+              where: {
+                characterId: character.id,
+              },
+            });
+            const liked = dbCharacter ? true : false;
+            return {
+              id: character.id,
+              first: character.name.first,
+              last: character.name.last,
+              full: character.name.full,
+              image: character.image.large,
+              liked,
+            };
+          })
+        );
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send(error);
+      }
     })
     .catch((e) => res.status(500).send(e));
 };
@@ -108,21 +116,24 @@ exports.getRandom = async function (req, res) {
     )
     .then(async (response) => {
       const character = response.data.data.Character;
-      const dbCharacter = await Character.findOne({
+      Character.findOne({
         where: {
           characterId: character.id,
         },
-      });
-      const liked = dbCharacter ? true : false;
-      character.liked = liked;
-      return res.status(200).send({
-        id: character.id,
-        first: character.name.first,
-        last: character.name.last,
-        full: character.name.full,
-        image: character.image.large,
-        liked,
-      });
+      })
+        .then((dbCharacter) => {
+          const liked = dbCharacter ? true : false;
+          character.liked = liked;
+          return res.status(200).send({
+            id: character.id,
+            first: character.name.first,
+            last: character.name.last,
+            full: character.name.full,
+            image: character.image.large,
+            liked,
+          });
+        })
+        .catch((e) => res.status(500).send(e));
     })
     .catch((e) => res.status(500).send(e));
 };

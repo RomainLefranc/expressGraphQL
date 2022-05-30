@@ -18,34 +18,38 @@ exports.getAll = async function (req, res) {
   Character.findAll()
     .catch((e) => res.status(500).send(e))
     .then(async (characters) => {
-      const result = await Promise.all(
-        characters.map(async (character) => {
-          const response = await axios.post(
-            "https://graphql.anilist.co",
-            {
-              query: GET_CHARACTER_BY_ID,
-              variables: {
-                id: character.characterId,
+      try {
+        const result = await Promise.all(
+          characters.map(async (character) => {
+            const response = await axios.post(
+              "https://graphql.anilist.co",
+              {
+                query: GET_CHARACTER_BY_ID,
+                variables: {
+                  id: character.characterId,
+                },
               },
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          const aniCharacter = response.data.data.Character;
-          return {
-            id: character.characterId,
-            first: aniCharacter.name.first,
-            last: aniCharacter.name.last,
-            full: aniCharacter.name.full,
-            image: aniCharacter.image.large,
-            liked: true,
-          };
-        })
-      );
-      res.status(200).send(result);
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            const aniCharacter = response.data.data.Character;
+            return {
+              id: character.characterId,
+              first: aniCharacter.name.first,
+              last: aniCharacter.name.last,
+              full: aniCharacter.name.full,
+              image: aniCharacter.image.large,
+              liked: true,
+            };
+          })
+        );
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send(error);
+      }
     });
 };
 
